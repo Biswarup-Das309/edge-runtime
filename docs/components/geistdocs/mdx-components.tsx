@@ -1,25 +1,25 @@
-import { DynamicLink } from "fumadocs-core/dynamic-link";
-import { TypeTable } from "fumadocs-ui/components/type-table";
-import defaultMdxComponents from "fumadocs-ui/mdx";
-import type { MDXComponents } from "mdx/types";
+import { DynamicLink } from 'fumadocs-core/dynamic-link'
+import { TypeTable } from 'fumadocs-ui/components/type-table'
+import defaultMdxComponents from 'fumadocs-ui/mdx'
+import type { MDXComponents } from 'mdx/types'
 import {
   Callout,
   CalloutContainer,
   CalloutDescription,
   CalloutTitle,
-} from "./callout";
-import { CodeBlock } from "./code-block";
+} from './callout'
+import { CodeBlock } from './code-block'
 import {
   CodeBlockTab,
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
-} from "./code-block-tabs";
-import { Mermaid } from "./mermaid";
-import { Video } from "./video";
+} from './code-block-tabs'
+import { Mermaid } from './mermaid'
+import { Video } from './video'
 
 export const getMDXComponents = (
-  components?: MDXComponents
+  components?: MDXComponents,
 ): MDXComponents => ({
   ...defaultMdxComponents,
   ...components,
@@ -27,13 +27,17 @@ export const getMDXComponents = (
   pre: CodeBlock,
 
   a: ({ href, ...props }) =>
-    href.startsWith("/") ? (
-      <DynamicLink href={`/[lang]${href}`} {...props} />
+    href.startsWith('/') ? (
+      <DynamicLink
+        className='font-normal text-primary no-underline'
+        href={`/[lang]${href}`}
+        {...props}
+      />
     ) : (
       <a
         href={href}
         {...props}
-        className="font-normal text-primary no-underline"
+        className='font-normal text-primary no-underline'
       />
     ),
 
@@ -52,4 +56,4 @@ export const getMDXComponents = (
   Mermaid,
 
   Video,
-});
+})

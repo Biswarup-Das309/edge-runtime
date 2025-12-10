@@ -83,8 +83,13 @@ describe('body', () => {
     const res = new Response(formData)
     const text = await res?.text()
 
-    expect(text.replace(/formdata-undici-0\d+/g, 'formdata-unidici-0.1234'))
-      .toMatchInlineSnapshot(`
+    // Normalize the output to handle differences between Node and Edge environments
+    // In Node, the output ends with "--\n", in Edge it ends with "--"
+    const normalized = text
+      .replace(/formdata-undici-0\d+/g, 'formdata-unidici-0.1234')
+      .trimEnd()
+
+    expect(normalized).toMatchInlineSnapshot(`
     "------formdata-unidici-0.1234
     Content-Disposition: form-data; name="name"
 

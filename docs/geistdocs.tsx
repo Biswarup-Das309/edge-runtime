@@ -1,5 +1,3 @@
-import { BookHeartIcon } from 'lucide-react'
-
 export const Logo = () => (
   <div className='flex items-center gap-2'>
     <svg

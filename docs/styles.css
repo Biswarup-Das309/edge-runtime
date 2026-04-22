@@ -1,4 +1,16 @@
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'nextra-theme-docs/style.css';
+
+@variant dark (&:where(.dark *));
+
+@custom-variant betterhover (@media (hover: hover));
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: Menlo, Monaco, 'Lucida Console', 'Liberation Mono',
+    'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace;
+  --color-dark: #000;
+}
 
 code {
   @apply text-sm;
@@ -19,20 +31,21 @@ body {
   filter: invert(1) brightness(1.8);
 }
 
-#__next .nextra-body > main h1 {
+/* App Router: match previous #__next hooks via main content */
+body .nextra-body > main h1 {
   margin-top: 0;
 }
 
-#__next article :not(pre) > code {
+body article :not(pre) > code {
   color: var(--shiki-token-string-expression);
   background-color: transparent;
   border: 0;
   font-size: 90%;
 }
 
-#__next article :not(pre) > code::before,
-#__next article :not(pre) > code::after {
-  content: '\`';
+body article :not(pre) > code::before,
+body article :not(pre) > code::after {
+  content: '`';
 }
 
 .dark body article pre {
@@ -76,26 +89,22 @@ code[data-language='sh'] {
   --shiki-token-string: var(--shiki-color-text);
 }
 
-#__next article.nextra-body h1 {
+body article.nextra-body h1 {
   font-size: 2em;
 }
 
-#__next article.nextra-body h2 {
+body article.nextra-body h2 {
   font-size: 1.5em;
 }
 
-#__next article.nextra-body h3 {
+body article.nextra-body h3 {
   font-size: 1.25em;
 }
 
-#__next article.nextra-body h4 {
+body article.nextra-body h4 {
   font-size: 1em;
 }
 
-#__next article.nextra-body h5 {
-  font-size: 0.875em;
-}
-
-#__next article.nextra-body h5 {
+body article.nextra-body h5 {
   font-size: 0.85em;
 }

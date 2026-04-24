@@ -1,0 +1,16 @@
+export default {
+  '*': {
+    theme: {
+      footer: false,
+    },
+  },
+  index: 'Introduction',
+  'getting-started': 'Getting Started',
+  cli: 'Command-line Interface',
+  features: 'Features',
+  packages: 'Packages',
+  changelog: {
+    title: 'Changelog',
+    href: 'https://github.com/vercel/edge-runtime/releases',
+  },
+}

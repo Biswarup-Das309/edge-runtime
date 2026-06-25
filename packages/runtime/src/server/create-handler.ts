@@ -38,6 +38,15 @@ export function createHandler<T extends EdgeContext>(options: Options<T>) {
       try {
         const start = timeSpan()
 
+        let url: URL
+        try {
+          url = getURL(req)
+        } catch {
+          res.statusCode = 400
+          res.end('Invalid Host header')
+          return
+        }
+
         const body =
           req.method !== 'GET' && req.method !== 'HEAD'
             ? getClonableBodyStream(
@@ -47,14 +56,11 @@ export function createHandler<T extends EdgeContext>(options: Options<T>) {
               )
             : undefined
 
-        const response = await options.runtime.dispatchFetch(
-          String(getURL(req)),
-          {
-            headers: toRequestInitHeaders(req),
-            method: req.method,
-            body: body?.cloneBodyStream(),
-          },
-        )
+        const response = await options.runtime.dispatchFetch(String(url), {
+          headers: toRequestInitHeaders(req),
+          method: req.method,
+          body: body?.cloneBodyStream(),
+        })
 
         const waitUntil = response.waitUntil()
         awaiting.add(waitUntil)

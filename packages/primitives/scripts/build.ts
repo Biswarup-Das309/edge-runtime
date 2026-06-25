@@ -17,7 +17,7 @@ async function bundlePackage() {
   const filesExt = await fs.promises.readdir(entryFolder)
   const entryPoints = filesExt.map((file) => join(entryFolder, file))
   const outdir = resolve(__dirname, '../dist')
-  await fs.promises.mkdir(outdir).catch(() => {})
+  await fs.promises.mkdir(outdir, { recursive: true })
 
   await build({
     bundle: true,
@@ -106,7 +106,9 @@ async function bundlePackage() {
 
   for (const file of ['load']) {
     if (file !== 'index') {
-      await fs.promises.mkdir(resolve(__dirname, `../${file}`)).catch(() => {})
+      await fs.promises.mkdir(resolve(__dirname, `../${file}`), {
+        recursive: true,
+      })
       await fs.promises.writeFile(
         resolve(__dirname, `../${file}/package.json`),
         JSON.stringify(
@@ -162,6 +164,6 @@ async function generateTextFiles() {
 bundlePackage()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.log('Errored', error)
+    console.error('Build failed:', error)
     process.exit(1)
   })

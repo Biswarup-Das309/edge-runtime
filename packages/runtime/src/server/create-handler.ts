@@ -75,6 +75,14 @@ export function createHandler<T extends EdgeContext>(options: Options<T>) {
         const code = `${res.statusCode} ${STATUS_CODES[res.statusCode]}`
         options.logger?.debug(`${subject} → ${code} in ${time}`)
         res.end()
+      } catch (error) {
+        options.logger?.error(
+          `Failed to handle request ${req.method} ${req.url}: ${error}`,
+        )
+        if (!res.headersSent) {
+          res.statusCode = 500
+          res.statusMessage = 'Internal Server Error'
+        }
       } finally {
         if (!res.writableEnded) {
           res.end()

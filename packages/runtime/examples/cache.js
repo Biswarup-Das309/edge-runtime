@@ -3,7 +3,17 @@
 async function handleRequest(event) {
   const cache = await caches.open('default')
   const { searchParams } = new URL(event.request.url)
-  const url = searchParams.get('url') || 'https://example.vercel.sh'
+  const rawUrl = searchParams.get('url') || 'https://example.vercel.sh'
+  let url
+  try {
+    const parsed = new URL(rawUrl)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return new Response('Invalid URL protocol', { status: 400 })
+    }
+    url = parsed.toString()
+  } catch {
+    return new Response('Invalid URL', { status: 400 })
+  }
 
   const cacheKey = new URL(url).toString()
   const request = new Request(cacheKey)
@@ -27,6 +37,8 @@ addEventListener('fetch', (event) => {
   try {
     return event.respondWith(handleRequest(event))
   } catch (e) {
-    return event.respondWith(new Response('Error thrown ' + e.message))
+    return event.respondWith(
+      new Response('Internal Server Error', { status: 500 }),
+    )
   }
 })

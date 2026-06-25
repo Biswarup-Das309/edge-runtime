@@ -87,13 +87,19 @@ export function createHandler<T extends EdgeContext>(options: Options<T>) {
 }
 
 /**
- * Builds a full URL from the provided incoming message. Note this function
- * is not safe as one can set has a host anything based on headers. It is
- * useful to build the fetch request full URL.
+ * Builds a full URL from the provided incoming message. Validates the
+ * Host header to prevent host header injection attacks.
  */
 function getURL(req: IncomingMessage) {
   const proto = (req.socket as any)?.encrypted ? 'https' : 'http'
-  return new URL(String(req.url), `${proto}://${String(req.headers.host)}`)
+  const host = String(req.headers.host ?? 'localhost')
+  if (
+    !/^[\w.-]+(:\d+)?$/.test(host) &&
+    !/^\[[\da-fA-F:]+\](:\d+)?$/.test(host)
+  ) {
+    throw new Error('Invalid Host header')
+  }
+  return new URL(String(req.url), `${proto}://${host}`)
 }
 
 /**

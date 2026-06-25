@@ -15,7 +15,7 @@ function createAppendMarquee() {
     el.id = "banner-${count}"
     el.style.background = 'red'
     el.style.color = 'white'
-    el.innerHTML = '${text}'
+    el.textContent = '${text}'
     el.style.width = '100%'
     el.style.background = '${bg}'
     el.style.color = 'white'
@@ -65,6 +65,18 @@ async function fetchRequest(url) {
 
 addEventListener('fetch', (event) => {
   const { searchParams } = new URL(event.request.url)
-  const url = searchParams.get('url') || 'https://example.vercel.s'
+  const rawUrl = searchParams.get('url') || 'https://example.vercel.sh'
+  let url
+  try {
+    const parsed = new URL(rawUrl)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return event.respondWith(
+        new Response('Invalid URL protocol', { status: 400 }),
+      )
+    }
+    url = parsed.toString()
+  } catch {
+    return event.respondWith(new Response('Invalid URL', { status: 400 }))
+  }
   return event.respondWith(fetchRequest(url))
 })

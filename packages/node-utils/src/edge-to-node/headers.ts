@@ -1,11 +1,14 @@
-import { Headers } from '@edge-runtime/primitives'
 import type { OutgoingHttpHeaders, ServerResponse } from 'node:http'
 
-export function toOutgoingHeaders(headers?: Headers): OutgoingHttpHeaders {
+interface HeadersLike {
+  entries(): IterableIterator<[string, string]>
+  getSetCookie(): string[]
+}
+
+export function toOutgoingHeaders(headers?: HeadersLike): OutgoingHttpHeaders {
   const outputHeaders: OutgoingHttpHeaders = {}
   if (headers) {
-    const _headers = new Headers(headers).entries()
-    for (const [name, value] of _headers) {
+    for (const [name, value] of headers.entries()) {
       outputHeaders[name] =
         name === 'set-cookie' ? headers.getSetCookie() : value
     }

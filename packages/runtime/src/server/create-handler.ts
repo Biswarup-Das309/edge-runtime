@@ -1,8 +1,12 @@
 import type { EdgeRuntime } from '../edge-runtime'
 import type { IncomingMessage, ServerResponse } from 'http'
-import type { Logger, NodeHeaders } from '../types'
+import type { Logger } from '../types'
 import type { EdgeContext } from '@edge-runtime/vm'
 import { getClonableBodyStream, pipeBodyStreamToResponse } from './body-streams'
+import {
+  toOutgoingHeaders,
+  mergeIntoServerResponse,
+} from '@edge-runtime/node-utils'
 import prettyMs from 'pretty-ms'
 import timeSpan from 'time-span'
 
@@ -59,13 +63,7 @@ export function createHandler<T extends EdgeContext>(options: Options<T>) {
         res.statusCode = response.status
         res.statusMessage = response.statusText
 
-        for (const [key, value] of Object.entries(
-          toNodeHeaders(response.headers),
-        )) {
-          if (value !== undefined) {
-            res.setHeader(key, value)
-          }
-        }
+        mergeIntoServerResponse(toOutgoingHeaders(response.headers), res)
 
         await pipeBodyStreamToResponse(response.body, res)
 
@@ -106,20 +104,6 @@ function getURL(req: IncomingMessage) {
 function toRequestInitHeaders(req: IncomingMessage): RequestInit['headers'] {
   return Object.keys(req.headers).map((key) => {
     const value = req.headers[key]
-    return [key, Array.isArray(value) ? value.join(', ') : value ?? '']
+    return [key, Array.isArray(value) ? value.join(', ') : (value ?? '')]
   })
-}
-
-/**
- * Transforms WHATWG Headers into a Node Headers shape. Copies all items but
- * does a special case for Set-Cookie using the [`getSetCookie`](https://developer.mozilla.org/en-US/docs/Web/API/Headers/getSetCookie) method.
- */
-function toNodeHeaders(headers?: Headers): NodeHeaders {
-  const result: NodeHeaders = {}
-  if (headers) {
-    for (const [key, value] of headers.entries()) {
-      result[key] = key === 'set-cookie' ? headers.getSetCookie() : value
-    }
-  }
-  return result
 }

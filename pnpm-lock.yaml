@@ -231,6 +231,9 @@ importers:
       '@edge-runtime/format':
         specifier: workspace:*
         version: link:../format
+      '@edge-runtime/node-utils':
+        specifier: workspace:*
+        version: link:../node-utils
       '@edge-runtime/ponyfill':
         specifier: workspace:*
         version: link:../ponyfill

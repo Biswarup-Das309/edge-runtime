@@ -1,8 +1,4 @@
 import { defineConfig } from 'tsup'
+import { baseConfig } from '../../tsup.config.base'
 
-export default defineConfig({
-  dts: true,
-  entry: ['./src/index.ts'],
-  format: ['cjs', 'esm'],
-  tsconfig: './tsconfig.prod.json',
-})
+export default defineConfig(baseConfig)

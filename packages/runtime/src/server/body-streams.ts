@@ -99,6 +99,12 @@ function isUint8ArrayChunk(value: any): value is Uint8Array {
   return value?.constructor?.name == 'Uint8Array'
 }
 
+function assertUint8ArrayChunk(value: any): asserts value is Uint8Array {
+  if (!isUint8ArrayChunk(value)) {
+    throw new TypeError('This ReadableStream did not return bytes.')
+  }
+}
+
 /**
  * Creates an async iterator from a ReadableStream that ensures that every
  * emitted chunk is a `Uint8Array`. If there is some invalid chunk it will
@@ -117,8 +123,10 @@ export async function* consumeUint8ArrayReadableStream(
           return
         }
 
-        if (!isUint8ArrayChunk(value)) {
-          error = new TypeError('This ReadableStream did not return bytes.')
+        try {
+          assertUint8ArrayChunk(value)
+        } catch (e) {
+          error = e
           break
         }
         yield value
@@ -168,8 +176,9 @@ export async function pipeBodyStreamToResponse(
     const { done, value } = await reader.read()
     if (done) break
 
-    if (!isUint8ArrayChunk(value)) {
-      const error = new TypeError('This ReadableStream did not return bytes.')
+    try {
+      assertUint8ArrayChunk(value)
+    } catch (error) {
       reader.cancel(error)
       throw error
     }

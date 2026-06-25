@@ -35,6 +35,16 @@ function computeOrigin({ headers }: IncomingMessage, defaultOrigin: string) {
   if (!authority) {
     return defaultOrigin
   }
-  const [, port] = authority.split(':')
+  if (
+    !/^[\w.-]+(:\d+)?$/.test(authority) &&
+    !/^\[[\da-fA-F:]+\](:\d+)?$/.test(authority)
+  ) {
+    return defaultOrigin
+  }
+  const bracketIdx = authority.indexOf(']')
+  const port =
+    bracketIdx !== -1
+      ? authority.slice(bracketIdx + 2)
+      : authority.split(':')[1]
   return `${port === '443' ? 'https' : 'http'}://${authority}`
 }

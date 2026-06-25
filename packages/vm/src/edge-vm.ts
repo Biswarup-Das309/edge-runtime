@@ -117,9 +117,19 @@ const transferableConstructors = [
   'TypeError',
 ] as const
 
+const nodeConstructors: Record<string, unknown> = {
+  Object,
+  Array,
+  RegExp,
+  Uint8Array,
+  ArrayBuffer,
+  Error,
+  SyntaxError,
+  TypeError,
+}
+
 function patchInstanceOf(item: string, ctx: any) {
-  // @ts-ignore
-  ctx[Symbol.for(`node:${item}`)] = eval(item)
+  ctx[Symbol.for(`node:${item}`)] = nodeConstructors[item]
 
   return runInContext(
     `

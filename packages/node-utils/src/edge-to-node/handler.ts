@@ -24,8 +24,16 @@ export function buildToNodeHandler(
       const request = toRequest(incomingMessage, options)
       const maybePromise = webHandler(request, toFetchEvent(request))
       if (maybePromise instanceof Promise) {
-        maybePromise.then((response) =>
-          toServerResponse(response, serverResponse),
+        maybePromise.then(
+          (response) => toServerResponse(response, serverResponse),
+          (error) => {
+            console.error('Web handler error:', error)
+            if (!serverResponse.headersSent) {
+              serverResponse.statusCode = 500
+              serverResponse.statusMessage = 'Internal Server Error'
+            }
+            serverResponse.end()
+          },
         )
       } else {
         toServerResponse(maybePromise, serverResponse)

@@ -97,5 +97,6 @@ async function main() {
 
 main().catch((error: any) => {
   if (!(error instanceof Error)) error = new Error(error)
+  console.error(error)
   process.exit(1)
 })
